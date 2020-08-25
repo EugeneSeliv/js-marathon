@@ -52,8 +52,8 @@
   }
 
   function init() {
-    character.changeHP(0);
-    enemy.changeHP(0);
+    changeHP.call(character, 0);
+    changeHP.call(enemy, 0);
     character.strikeCount = random(2) - 1;
     character.healCount = random(2) - 1;
     enemy.strikeCount = random(2) - 1;
