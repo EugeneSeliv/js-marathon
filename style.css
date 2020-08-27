@@ -481,3 +481,20 @@ h1 {
 .action label {
     padding: 6px 0;
 }
+
+.logs-list {
+    max-width: 800px;
+    padding:  45px 30px 30px;
+    margin: 0 auto;
+    background-color: #ff0000;
+    opacity: 0.3;
+    border-radius: 30px;
+}
+
+.logs-list .list-item {
+    margin: 0 0 10px 20px;
+    text-align: left;
+    color: #fff;
+    font-weight: 700;
+    opacity: 1;
+}
