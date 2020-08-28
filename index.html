@@ -16,23 +16,7 @@
             <img class="logo" title="Reset Game" src="./assets/Pokemon_logo.png" alt="Pokemon">
         </header>
         <div class="playground">
-            <div class="pokemon character">
-                <span class="lvl">Lv. 1</span>
-
-                <img src="./assets/pikachu.png" id="pikachu" class="sprite">
-
-                <div class="details">
-                    <h2 class="name" id="name-character">
-                        Pikachu
-                    </h2>
-                    <div class="hp">
-                        <div class="bar">
-                            <div class="health" id="progressbar-character" style="width: 100%;"></div>
-                        </div>
-                        <span class="text" id="health-character">100 / 100</span>
-                    </div>
-                </div>
-            </div>
+            <div id="character-1" class="pokemon character"></div>
 
             <div class="control">
                 <button class="button" id="btn-damage">
@@ -43,24 +27,9 @@
                 </button>
             </div>
 
-            <div class="pokemon enemy">
-                <span class="lvl">Lv. 1</span>
-
-                <img src="./assets/charmander.png" id="charmander" class="sprite">
-
-                <div class="details">
-                    <h2 class="name" id="name-enemy">
-                        Charmander
-                    </h2>
-                    <div class="hp">
-                        <div class="bar">
-                            <div class="health" id="progressbar-enemy" style="width: 100%;"></div>
-                        </div>
-                        <span class="text" id="health-enemy">100 / 100</span>
-                    </div>
-                </div>
-            </div>
+            <div id="character-2" class="pokemon enemy"></div>
         </div>
+        <ul class="logs-list" id="fight-logs"></ul>
     </div>
     <div class="catch_screen"></div>
 
