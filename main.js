@@ -6,7 +6,7 @@
       type: 'electric',
       weakness: ['fighting', 'water', 'some'],
       resistence: ['steel'],
-      defaultHP: 200,
+      defaultHP: 100,
       avatar: './assets/pikachu.png',
     }, {
       name: 'Charmander',
@@ -143,24 +143,18 @@
     ];
   }
 
-  function renderDomElement(domElementsData, parentId) {
+  function renderDomElement(domElementsData, parentId, direction = true) {
     const $parentId = $getElById(parentId);
-    const domTreeDepth = domElementsData.reduce((maxValue, currentItem) => {
-      if (currentItem.domTreeLevel === 0) {
-        return currentItem.domTreeLevel;
-      } else if (currentItem.domTreeLevel > maxValue) {
-        return currentItem.domTreeLevel;
-      } else {
-        return maxValue;
-      }
-    });
+    const domTreeDepth = Math.max(...domElementsData.map(item => item.domTreeLevel));
+
     domElementsData.forEach(element => {
       element.$dom = createDomElement(element);
     });
     for (let i = 0; i <= domTreeDepth; i++) {
       domElementsData.forEach(element => {
         if (element.domTreeLevel === 0 && i === 0) {
-          $parentId.appendChild(element.$dom);
+          if (direction) $parentId.appendChild(element.$dom);
+          if (!direction) $parentId.insertBefore(element.$dom, $parentId.children[0]);
         } else if (element.domTreeLevel === i) {
           domElementsData.forEach(item => {
             if (element.parent === item.id) {
@@ -182,16 +176,18 @@
     $btnRecovery = $getElById('btn-recovery');
     const character = characters[0];
     const enemy = characters[1];
+    const allStrikeCounter = counterGenerator();
+    const allButtonsClickCounter = counterGenerator();
 
     $btnDamage.addEventListener('click', function () {
       if (character.hp.strikeCount <= enemy.hp.strikeCount) {
         const damage = random(20);
         character.changeHP(damage);
-        renderLog('fight-logs', generateLog(character, enemy, damage));
+        renderLog('fight-logs', generateLog(character, enemy, damage), allStrikeCounter());
       } else {
         const damage = random(20);
         enemy.changeHP(damage);
-        renderLog('fight-logs', generateLog(enemy, character, damage));
+        renderLog('fight-logs', generateLog(enemy, character, damage), allStrikeCounter());
       }
       if (character.hp.current <= 0 || enemy.hp.current <= 0) {
         $btnDamage.disabled = true;
@@ -210,6 +206,29 @@
         enemy.changeHP(- random(15));
       }
     });
+
+    addButtonsClickLimit('.button', [5, 7]);
+
+  }
+
+  function eventListenerGenerator(eventName, nodeList, handler) {
+    nodeList.forEach(($element) => {
+      $element.addEventListener(eventName, () => handler($element));
+    });
+  }
+
+  function addButtonsClickLimit(query, limitsArray) {
+    const $buttons = $getElByQueryAll(query);
+    $buttons.forEach(($btn, index) => {
+      $btn.clickLimit = limitsArray[index];
+      $btn.children[0].innerText = limitsArray[index];
+    });
+    eventListenerGenerator('click', $buttons, function ($element) {
+      --$element.clickLimit;
+      $element.children[0].innerText = $element.clickLimit;
+      console.log($element.clickLimit);
+      if ($element.clickLimit <= 0) $element.disabled = true;
+    });
   }
 
   function random(num) {
@@ -224,36 +243,77 @@
     return document.querySelector(selector);
   }
 
+  function $getElByQueryAll(selector) {
+    return document.querySelectorAll(selector);
+  }
+
+  function counterGenerator() {
+    let accumulator = 0;
+    return (increment = 1) => accumulator += increment;
+  }
+
   function generateLog(firstPerson, secondPerson, damage) {
     const { name: firstName, hp: { current, total } } = firstPerson;
     const { name: secondName } = secondPerson;
+    const numberLengthNormalize = (number, length) => {
+      let result = '';
+      const prefixLength = length >= `${number}`.length ? length - `${number}`.length : 0;
+      for (let i = 0; i < prefixLength; i++) result += '0';
+      result += number;
+      return result;
+    }
+    const damageHp = `[${numberLengthNormalize(damage, 2)}, ${numberLengthNormalize(current, 3)} / ${numberLengthNormalize(total, 3)}]`;
     const logs = [
-      `[${damage}, ${current} / ${total}] - ${firstName} вспомнил что-то важное, но неожиданно ${secondName}, не помня себя от испуга, ударил в предплечье врага.`,
-      `[${damage}, ${current} / ${total}] - ${firstName} поперхнулся, и за это ${secondName} с испугу приложил прямой удар коленом в лоб врага.`,
-      `[${damage}, ${current} / ${total}] - ${firstName} забылся, но в это время наглый ${secondName}, приняв волевое решение, неслышно подойдя сзади, ударил.`,
-      `[${damage}, ${current} / ${total}] - ${firstName} пришел в себя, но неожиданно ${secondName} случайно нанес мощнейший удар.`,
-      `[${damage}, ${current} / ${total}] - ${firstName} поперхнулся, но в это время ${secondName} нехотя раздробил кулаком \<вырезанно цензурой\> противника.`,
-      `[${damage}, ${current} / ${total}] - ${firstName} удивился, а ${secondName} пошатнувшись влепил подлый удар.`,
-      `[${damage}, ${current} / ${total}] - ${firstName} высморкался, но неожиданно ${secondName} провел дробящий удар.`,
-      `[${damage}, ${current} / ${total}] - ${firstName} пошатнулся, и внезапно наглый ${secondName} беспричинно ударил в ногу противника.`,
-      `[${damage}, ${current} / ${total}] - ${firstName} расстроился, как вдруг, неожиданно ${secondName} случайно влепил стопой в живот соперника.`,
-      `[${damage}, ${current} / ${total}] - ${firstName} пытался что-то сказать, но вдруг, неожиданно ${secondName} со скуки, разбил бровь сопернику.`
+      [damageHp, `${firstName} вспомнил что-то важное, но неожиданно ${secondName}, не помня себя от испуга, ударил в предплечье врага.`],
+      [damageHp, `${firstName} поперхнулся, и за это ${secondName} с испугу приложил прямой удар коленом в лоб врага.`],
+      [damageHp, `${firstName} забылся, но в это время наглый ${secondName}, приняв волевое решение, неслышно подойдя сзади, ударил.`],
+      [damageHp, `${firstName} пришел в себя, но неожиданно ${secondName} случайно нанес мощнейший удар.`],
+      [damageHp, `${firstName} поперхнулся, но в это время ${secondName} нехотя раздробил кулаком \<вырезанно цензурой\> противника.`],
+      [damageHp, `${firstName} удивился, а ${secondName} пошатнувшись влепил подлый удар.`],
+      [damageHp, `${firstName} высморкался, но неожиданно ${secondName} провел дробящий удар.`],
+      [damageHp, `${firstName} пошатнулся, и внезапно наглый ${secondName} беспричинно ударил в ногу противника.`],
+      [damageHp, `${firstName} расстроился, как вдруг, неожиданно ${secondName} случайно влепил стопой в живот соперника.`],
+      [damageHp, `${firstName} пытался что-то сказать, но вдруг, неожиданно ${secondName} со скуки, разбил бровь сопернику.`]
     ];
     return logs[random(logs.length - 1)];
   }
 
-  function renderLog(listId, logText) {
-    const listItemData = {
+  function renderLog(listId, logText, allStrikeCount) {
+    const [damageHp, text] = logText;
+    const listItemData = [{
+      id: 'li',
       tegName: 'li',
-      innerText: `${logText}`,
       attributes: {
-        class: 'list-item',
+        class: 'logs-list__list-item',
       },
+      domTreeLevel: 0,
+    }, {
+      id: 'damageHp',
+      tegName: 'span',
+      innerText: `${damageHp}`,
+      attributes: {
+        class: 'logs-list__item-damageHp',
+      },
+      domTreeLevel: 1,
+      parent: 'li',
+    }, {
+      id: 'text',
+      tegName: 'p',
+      innerText: `${text}`,
+      attributes: {
+        class: 'logs-list__item-text',
+      },
+      domTreeLevel: 1,
+      parent: 'li',
+    }];
+    renderDomElement(listItemData, listId, false);
+    const oddFlag = allStrikeCount % 2 === 0 ? true : false;
+    const $liDamageHp = $getElByQuery('.logs-list__list-item .logs-list__item-damageHp');
+    const $liText = $getElByQuery('.logs-list__list-item .logs-list__item-text');
+    if (oddFlag) {
+      $liDamageHp.setAttribute('style', 'color: #fdf502; border-color: #fdf502');
+      $liText.setAttribute('style', 'color: #fdf502; border-color: #fdf502');
     }
-    const $list = $getElById(listId);
-    const $firstItem = $list.children[0];
-    const $listItem = createDomElement(listItemData);
-    $list.insertBefore($listItem, $firstItem);
   }
 
   init();
