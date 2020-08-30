@@ -177,7 +177,6 @@
     const character = characters[0];
     const enemy = characters[1];
     const allStrikeCounter = counterGenerator();
-    const allButtonsClickCounter = counterGenerator();
 
     $btnDamage.addEventListener('click', function () {
       if (character.hp.strikeCount <= enemy.hp.strikeCount) {
