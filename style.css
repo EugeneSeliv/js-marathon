@@ -1,11 +1,100 @@
-* {
+/*----------- reset css -----------*/
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
-html, body {
+ul,
+ol {
+    padding: 0;
+}
+
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+li,
+article,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
     padding: 0;
     margin: 0;
 }
+
+body {
+    min-height: 100vh;
+    scroll-behavior: smooth;
+    text-rendering: optimizeSpeed;
+    line-height: 1.5;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+a {
+    text-decoration-skip-ink: auto;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+a,
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+input,
+input:hover,
+input:focus,
+input:active,
+button,
+button:hover,
+button:focus,
+button:active,
+a,
+a:hover,
+a:focus,
+a:active,
+textarea,
+textarea:hover,
+textarea:focus,
+textarea:active {
+    outline: none;
+}
+
+a,
+a:hover,
+a:active {
+    text-decoration: none;
+    color: inherit;
+}
+
+a,
+button {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+button,
+label {
+    cursor: pointer;
+}
+/*----------- /reset css -----------*/
 
 body {
     color: black;
@@ -35,21 +124,20 @@ body {
 }
 
 .control {
-    width: 320px;
-    height: 260px;
+    min-width: 320px;
+    width: 100%;
     position: relative;
-    margin: 20px;
+    margin-bottom: 60px;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
 }
 
 .playground {
     max-width: 1024px;
     display: flex;
     justify-content: space-around;
-    margin: 30px auto;
+    margin: 20px auto 40px;
 }
 
 .arrow {
@@ -270,7 +358,7 @@ body {
     position: relative;
     max-width: 200px;
     width: 100%;
-
+    margin: 0 20px;
     background: white;
     border: 2px solid #ffc55b;
     border-radius: 10px;
@@ -281,10 +369,6 @@ body {
     cursor: pointer;
     font-size: 18px;
 
-}
-
-.button:not(:last-child) {
-    margin-bottom: 30px;
 }
 
 .button:after {
@@ -450,7 +534,7 @@ h1 {
 
 .logo {
     max-width: 240px;
-    margin: 30px 20px 0;
+    margin: 30px auto 0 auto;
 }
 
 .body {
@@ -483,18 +567,38 @@ h1 {
 }
 
 .logs-list {
-    max-width: 800px;
-    padding:  45px 30px 30px;
-    margin: 0 auto;
-    background-color: #ff0000;
-    opacity: 0.3;
-    border-radius: 30px;
+    max-width: 1024px;
+    padding:  0 30px;
+    margin: 0 auto 60px auto;
 }
 
-.logs-list .list-item {
-    margin: 0 0 10px 20px;
+.logs-list__list-item {
+    display: flex;
+    margin-bottom: 10px;
     text-align: left;
     color: #fff;
-    font-weight: 700;
+    line-height: 22px;
+    list-style-type: none;
     opacity: 1;
+}
+
+.logs-list__item-damageHp {
+    flex-basis: 160px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logs-list__item-text {
+    flex-basis: 854px;
+}
+
+.logs-list__item-damageHp, .logs-list__item-text {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #fff;
+    border-radius: 10px;
 }
