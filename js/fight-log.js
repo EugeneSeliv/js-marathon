@@ -1,15 +1,13 @@
-import { random, renderDomElement, $getElByQuery } from './functions.js';
+import {
+  random,
+  renderDomElement,
+  $getElByQuery,
+  numberLengthNormalize
+} from './functions.js';
 
 function generateLog(firstPerson, secondPerson, damage) {
   const { name: firstName, hp: { current, total } } = firstPerson;
   const { name: secondName } = secondPerson;
-  const numberLengthNormalize = (number, length) => {
-    let result = '';
-    const prefixLength = length >= `${number}`.length ? length - `${number}`.length : 0;
-    for (let i = 0; i < prefixLength; i++) result += '0';
-    result += number;
-    return result;
-  }
   const damageHp = `[${numberLengthNormalize(damage, 2)}, ${numberLengthNormalize(current, 3)} / ${numberLengthNormalize(total, 3)}]`;
   const logs = [
     [damageHp, `${firstName} вспомнил что-то важное, но неожиданно ${secondName}, не помня себя от испуга, ударил в предплечье врага.`],
@@ -26,7 +24,7 @@ function generateLog(firstPerson, secondPerson, damage) {
   return logs[random(logs.length - 1)];
 }
 
-function renderLog(listId, firstPerson, secondPerson, damage, allStrikeCount) {
+function renderLog(listId, firstPerson, secondPerson, damage, color) {
   const [damageHp, text] = generateLog(firstPerson, secondPerson, damage);
   const listItemData = [{
     id: 'li',
@@ -55,13 +53,10 @@ function renderLog(listId, firstPerson, secondPerson, damage, allStrikeCount) {
     parent: 'li',
   }];
   renderDomElement(listItemData, listId, false);
-  const oddFlag = allStrikeCount % 2 === 0 ? true : false;
   const $liDamageHp = $getElByQuery('.logs-list__list-item .logs-list__item-damageHp');
   const $liText = $getElByQuery('.logs-list__list-item .logs-list__item-text');
-  if (oddFlag) {
-    $liDamageHp.setAttribute('style', 'color: #fdf502; border-color: #fdf502');
-    $liText.setAttribute('style', 'color: #fdf502; border-color: #fdf502');
-  }
+  $liDamageHp.setAttribute('style', `color: ${color}; border-color: ${color}`);
+  $liText.setAttribute('style', `color: ${color}; border-color: ${color}`);
 }
 
 export default renderLog;

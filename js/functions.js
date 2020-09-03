@@ -25,8 +25,19 @@ export function clickCounterGenerator(clickLimit, $btn) {
   return () => {
     --$btn.clickLimit;
     $btn.children[0].innerText = $btn.clickLimit;
-    if ($btn.clickLimit <= 0) $btn.disabled = true;
+    if ($btn.clickLimit <= 0) {
+      $btn.disabled = true;
+      return false;
+    } else return true;
   };
+}
+
+export const numberLengthNormalize = (number, length) => {
+  let result = '';
+  const prefixLength = length >= `${number}`.length ? length - `${number}`.length : 0;
+  for (let i = 0; i < prefixLength; i++) result += '0';
+  result += number;
+  return result;
 }
 
 export function addButtonsClickLimit(query, limitsArray) {
