@@ -1,7 +1,8 @@
 import { random, $getElByQuery } from './functions.js';
+import renderLog from './fight-log.js';
 
 class Character {
-  constructor({ name, avatar, type, weakness, resistence, defaultHP }) {
+  constructor({ name, avatar, type, weakness, resistence, defaultHP, attacks }) {
     this.name = name;
     this.avatar = avatar;
     this.type = type;
@@ -13,6 +14,7 @@ class Character {
       strikeCount: random(2) - 1,
       healCount: random(2) - 1,
     };
+    this.attacks = attacks;
   }
   initControls = function (parentId) {
     this.elHP = $getElByQuery(`#${parentId} .text`);
@@ -30,7 +32,13 @@ class Character {
     if (this.hp.current > this.hp.total) this.hp.current = this.hp.total;
     this.elHP.innerText = this.hp.current + ' / ' + this.hp.total;
     this.elProgressbar.style.width = 100 * this.hp.current / this.hp.total + '%';
-    if (this.hp.current <= 0) this.avatar.style.opacity = 0.1;
+    if (this.hp.current <= 0) this.elAvatar.style.opacity = 0.1;
+  };
+  counterattack = function (enemy) {
+    const attack = this.attacks[random(this.attacks.length - 1)];
+    const damage = attack.minDamage - random(attack.maxDamage - attack.minDamage);
+    enemy.changeHP.call(enemy, damage);
+    renderLog('fight-logs', this, enemy, damage, '#fff');
   };
 }
 
