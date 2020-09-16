@@ -1,44 +1,82 @@
-import { random, $getElByQuery } from './functions.js';
+import { random, $getElByQuery, randomInRange } from './functions.js';
 import renderLog from './fight-log.js';
 
 class Character {
-  constructor({ name, avatar, type, weakness, resistence, defaultHP, attacks }) {
+  constructor({ id, name, img, type, hp, attacks }) {
+    this.id = id;
     this.name = name;
-    this.avatar = avatar;
+    this.avatar = img;
     this.type = type;
-    this.weakness = weakness;
-    this.resistence = resistence;
     this.hp = {
-      current: defaultHP,
-      total: defaultHP,
+      current: hp,
+      total: hp,
       strikeCount: random(2) - 1,
       healCount: random(2) - 1,
+      totalDamage: 0,
     };
+    this.score = 0;
     this.attacks = attacks;
+    this.$attackBtns = [];
   }
   initControls = function (parentId) {
     this.elHP = $getElByQuery(`#${parentId} .text`);
     this.elProgressbar = $getElByQuery(`#${parentId} .health`);
     this.elAvatar = $getElByQuery(`#${parentId} .sprite`);
+    this.container = $getElByQuery(`#${parentId}`);
   };
   changeHP = function (count) {
+    if (count > 0 && count < this.hp.current) {
+      this.hp.totalDamage += count;
+    } else if (count > 0 && count > this.hp.current) {
+      this.hp.totalDamage += this.hp.current;
+    }
     this.hp.current -= count;
+    const hpCurrentPercent = 100 * this.hp.current / this.hp.total;
     if (count >= 0) {
       this.hp.strikeCount += 1;
     } else {
       this.hp.healCount += 1;
     }
-    if (this.hp.current < 0) this.hp.current = 0;
-    if (this.hp.current > this.hp.total) this.hp.current = this.hp.total;
+    if (this.hp.current < 0) {
+      this.hp.current = 0;
+    } else if (this.hp.current > this.hp.total) {
+      this.hp.current = this.hp.total;
+    }
     this.elHP.innerText = this.hp.current + ' / ' + this.hp.total;
-    this.elProgressbar.style.width = 100 * this.hp.current / this.hp.total + '%';
-    if (this.hp.current <= 0) this.elAvatar.style.opacity = 0.1;
+    this.elProgressbar.style.width = hpCurrentPercent + '%';
+    this.elProgressbar.classList.remove('low', 'critical');
+    if (hpCurrentPercent <= 0) {
+      this.kill();
+    } else if (hpCurrentPercent >= 20 && hpCurrentPercent < 60) {
+      this.elProgressbar.classList.add('low');
+    } else if (hpCurrentPercent < 20) {
+      this.elProgressbar.classList.add('critical');
+    }
   };
-  counterattack = function (enemy) {
-    const attack = this.attacks[random(this.attacks.length - 1)];
-    const damage = attack.minDamage - random(attack.maxDamage - attack.minDamage);
-    enemy.changeHP.call(enemy, damage);
-    renderLog('fight-logs', this, enemy, damage, '#fff');
+  counterattack = function (character, characterDamage) {
+    if (this.hp.current > 0) {
+      if (characterDamage === undefined) {
+        const attack = this.attacks[random(this.attacks.length - 1)];
+        characterDamage = randomInRange(attack.minDamage, attack.maxDamage);
+      }
+      character.changeHP.call(character, characterDamage);
+      renderLog('fight-logs', this, character, characterDamage, '#fff');
+    }
+  };
+  kill = function () {
+    this.container.style.opacity = 0;
+    this.elAvatar.style.maxWidth = 'none';
+    this.elAvatar.style.top = '-700px';
+    this.elAvatar.setAttribute('src', '../assets/bang.gif');
+    // const $buttons = $getElByQueryAll('.control .button');
+    // $buttons.forEach(element => {
+    //   element.setAttribute("disabled", "true");
+    // });
+    if (this.player) {
+      this.gameOver();
+    } else {
+      this.newEnemy();
+    }
   };
 }
 

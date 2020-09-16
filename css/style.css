@@ -184,6 +184,7 @@ body {
     background-image: url(../assets/card.svg);
     background-repeat: no-repeat;
     background-size: contain;
+    transition: opacity 1s ease;
 }
 
 .pokemon::before {
@@ -247,6 +248,7 @@ body {
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     max-width: 100px;
+    transition: top 4s ease;
 }
 .pokemon .details {
     position: absolute;
@@ -274,7 +276,7 @@ body {
 .pokemon .details .hp .bar {
     border-radius: 50px;
     background: #073fa7;
-    border: 3.5px solid #00a3e2;
+    border: 3px solid #00a3e2;
     height: 18px;
     overflow: hidden;
 }
@@ -358,7 +360,7 @@ body {
     position: relative;
     max-width: 200px;
     width: 100%;
-    margin: 0 20px;
+    margin: 0 20px 20px 20px;
     background: white;
     border: 2px solid #ffc55b;
     border-radius: 10px;
@@ -607,4 +609,23 @@ h1 {
     margin-right: 10px;
     font-weight: 700;
     color: #ef3535;
+}
+
+.battlefield {
+  color: #f9df80;
+  font-size: 28px;
+}
+
+.red {
+  color: #d20000;
+}
+
+.fight {
+  color:#06fd02;
+  font-size: 32px;
+}
+
+.try-again {
+  color: #fff;
+  font-size: 14px;
 }
