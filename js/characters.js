@@ -68,10 +68,6 @@ class Character {
     this.elAvatar.style.maxWidth = 'none';
     this.elAvatar.style.top = '-700px';
     this.elAvatar.setAttribute('src', '../assets/bang.gif');
-    // const $buttons = $getElByQueryAll('.control .button');
-    // $buttons.forEach(element => {
-    //   element.setAttribute("disabled", "true");
-    // });
     if (this.player) {
       this.gameOver();
     } else {
