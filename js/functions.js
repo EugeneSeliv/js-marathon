@@ -1,3 +1,5 @@
+import { POKEMONS } from './pokemons.js';
+
 export function random(num) {
   return Math.ceil(Math.random() * num);
 }
@@ -28,7 +30,10 @@ export function clickCounterGenerator(clickLimit, $btn) {
     if ($btn.clickLimit <= 0) {
       $btn.disabled = true;
       return false;
-    } else return true;
+    } else {
+      $btn.disabled = false;
+      return true
+    };
   };
 }
 
@@ -80,4 +85,69 @@ export function renderDomElement(domElementsData, parentId, direction = true) {
       }
     });
   }
+}
+
+export async function getPokemonsData(url) {
+  try {
+    const responce = await fetch(url);
+    if (responce.ok) {
+      return await responce.json();
+    } else {
+      alert('Server error');
+      return JSON.parse(POKEMONS);
+    }
+  } catch (err) {
+    alert('Network error');
+    return JSON.parse(POKEMONS);
+  }
+}
+
+export function createPokemonWrapper(containerId, pokemonId, wrapClass) {
+  const $container = $getElById(containerId);
+  const $pokemonWrapper = document.createElement('div');
+  $pokemonWrapper.setAttribute('id', `id${pokemonId}`);
+  $pokemonWrapper.pokemonId = pokemonId;
+  $pokemonWrapper.className = wrapClass;
+  $container.appendChild($pokemonWrapper);
+  return $pokemonWrapper;
+}
+
+export function removeChild(parentSelector) {
+  const parent = document.querySelector(parentSelector);
+  while (parent.firstChild) {
+    parent.firstChild.remove();
+  }
+}
+
+export async function getDamge(url, { payer1id, player2id, payer1AttackId }) {
+  try {
+    const responce = await fetch(`${url}player1id=${payer1id}&attackId=${payer1AttackId}&player2id=${player2id}`);
+    if (responce.ok) {
+      return await responce.json();
+    } else {
+      return false;
+    }
+  } catch (err) {
+    return false;
+  }
+}
+
+export function randomInRange(min, max) {
+  return min + random(max - min);
+}
+
+export function runningNumbers(node, duration, step = 1) {
+  const value = node.innerText;
+  const interval = Math.ceil(duration / (value / step));
+  let accumulator = 0;
+  node.innerText = '0';
+  const timerId = setInterval(() => {
+    if (accumulator < value) {
+      accumulator += step;
+      node.innerText = accumulator;
+    } else {
+      node.innerText = value;
+      clearInterval(timerId);
+    }
+  }, interval);
 }
